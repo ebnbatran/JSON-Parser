@@ -1,0 +1,28 @@
+{
+    "name": "ebrahim ahmad batran",
+    "age": 27,
+    "job": "student",
+    "salary": null,
+    "favorite_numbers": [
+        12,
+        14,
+        30
+    ],
+    "siblings": [
+        "norhan",
+        "mahmoud",
+        "batran"
+    ],
+    "parents": [
+        {
+            "name": "ahmad",
+            "age": 64,
+            "job": "teacher"
+        },
+        {
+            "name": "tahany",
+            "age": 59,
+            "job": "doctor"
+        }
+    ]
+}
