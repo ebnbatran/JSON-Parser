@@ -10,6 +10,7 @@ namespace JSON {
 
     Json::Json() {
         type = Type::Invalid;
+        value = {};
     }
 
     Json::Json(const Type &type) 
@@ -17,60 +18,59 @@ namespace JSON {
     {
         switch (type) {
             case Type::Boolean: {
-                value.boolean = false;
+                value = false;
             } break;
 
             case Type::Integer: {
-                value.integer = 0;
+                value = (long long)0;
             } break;
 
             case Type::FloatingPoint: {
-                value.floatingPoint = 0.0;
+                value = (long double)0.0;
             } break;
 
             case Type::String: {
-                value.string = new std::string();
+                value = new std::string();
             } break;
 
             case Type::Array: {
-                value.array = new std::vector<Json *>();
+                value = new std::vector<Json *>();
             } break;
 
             case Type::Object: {
-                value.object = new std::unordered_map<std::string, Json *>();
+                value = new std::unordered_map<std::string, Json *>();
             } break;
         }
     }
 
-    Json::Json(Json *other) {
+    Json::Json(const Json *other) {
         type = other->type;
 
         switch (type) {
             case Type::Boolean: {
-                value.boolean = other->value.boolean;
+                value = std::get<Type::Boolean>(other->value);
             } break;
 
             case Type::Integer: {
-                value.integer = other->value.integer;
+                value = std::get<Type::Integer>(other->value);
             } break;
 
             case Type::FloatingPoint: {
-                value.floatingPoint = other->value.floatingPoint;
+                value = std::get<Type::FloatingPoint>(other->value);
             } break;
 
             case Type::String: {
-                const auto otherString = *other->value.string;
-                value.string = new std::string(otherString);
+                value = new std::string(*(std::get<Type::String>(other->value)));
             } break;
 
             case Type::Array: {
-                const auto otherArray = *other->value.array;
-                value.array = new std::vector<Json *>(otherArray);
+                value = new std::vector<Json *>(*(std::get<Type::Array>(other->value)));
             } break;
 
             case Type::Object: {
-                const auto otherObject = *other->value.object;
-                value.object = new std::unordered_map<std::string, Json *>(otherObject);
+                value = 
+                    new std::unordered_map<std::string, Json *>
+                    (*(std::get<Type::Object>(other->value)));
             } break;
         }
     }
@@ -91,7 +91,7 @@ namespace JSON {
                     (input[3] == 'e')
                 ) {
                     json->type = Type::Boolean;
-                    json->value.boolean = true;
+                    json->value = true;
                 }
             } break;
 
@@ -103,7 +103,7 @@ namespace JSON {
                     (input[4] == 'e')
                 ) {
                     json->type = Type::Boolean;
-                    json->value.boolean = false;
+                    json->value = false;
                 }
             } break;
         }
@@ -157,7 +157,7 @@ namespace JSON {
         }
 
         json->type = Type::Integer;
-        json->value.integer = result;    
+        json->value = result;    
 
         return json;
     }
@@ -245,13 +245,13 @@ namespace JSON {
         json->type = Type::FloatingPoint;
 
         if (!power) {
-            json->value.floatingPoint = result;
+            json->value = result;
         } else {
             if (negPower) {
                 powerValue *= -1;
             }
 
-            json->value.floatingPoint = (long double)std::pow(result, powerValue);
+            json->value = (long double)std::pow(result, powerValue);
         }
 
         return json;
@@ -279,7 +279,7 @@ namespace JSON {
         }
 
         json->type = Type::String;
-        json->value.string = new std::string(extractedString);
+        json->value = new std::string(extractedString);
         
         return json;
     }
@@ -431,7 +431,7 @@ namespace JSON {
         }
         
         json->type = Type::Array;
-        json->value.array = jsonArray;
+        json->value = jsonArray;
 
         return json;
     }
@@ -665,7 +665,7 @@ namespace JSON {
         }
 
         json->type = Type::Object;
-        json->value.object = object;
+        json->value = object;
 
         return json;
     }
@@ -725,12 +725,12 @@ namespace JSON {
             throw WrongTypeException();
         }
 
-        return value.boolean == boolean;
+        return std::get<Type::Boolean>(value) == boolean;
     }
 
     void Json::operator=(bool boolean) {
         type = Type::Boolean;
-        value.boolean = boolean;
+        value = boolean;
     }
 
     bool Json::operator==(int integer) const {
@@ -738,12 +738,12 @@ namespace JSON {
             throw WrongTypeException();
         }
 
-        return value.integer == (long long)integer;
+        return std::get<Type::Integer>(value) == (long long)integer;
     }
 
     void Json::operator=(int integer) {
         type = Type::Integer;
-        value.integer = (long long)integer;
+        value = (long long)integer;
     }
 
     bool Json::operator==(long integer) const {
@@ -751,12 +751,12 @@ namespace JSON {
             throw WrongTypeException();
         }
 
-        return value.integer == (long long)integer;
+        return std::get<Type::Integer>(value) == (long long)integer;
     }
 
     void Json::operator=(long integer) {
         type = Type::Integer;
-        value.integer = (long long)integer;
+        value = (long long)integer;
     }
 
     bool Json::operator==(long long integer) const {
@@ -764,12 +764,12 @@ namespace JSON {
             throw WrongTypeException();
         }
 
-        return value.integer == integer;
+        return std::get<Type::Integer>(value) == integer;
     }
 
     void Json::operator=(long long integer) {
         type = Type::Integer;
-        value.integer = integer;
+        value = integer;
     }
 
     bool Json::operator==(float floatingPoint) const {
@@ -777,13 +777,13 @@ namespace JSON {
             throw WrongTypeException();
         }
 
-        return (value.floatingPoint >= (long double)floatingPoint - 0.01) &&
-                (value.floatingPoint <= (long double)floatingPoint + 0.01);
+        return (std::get<Type::FloatingPoint>(value) >= (long double)floatingPoint - 0.01) &&
+                (std::get<Type::FloatingPoint>(value) <= (long double)floatingPoint + 0.01);
     }
 
     void Json::operator=(float floatingPoint) {
         type = Type::FloatingPoint;
-        value.floatingPoint = (long double)floatingPoint;
+        value = (long double)floatingPoint;
     }
 
     bool Json::operator==(double floatingPoint) const {
@@ -791,13 +791,13 @@ namespace JSON {
             throw WrongTypeException();
         }
 
-        return (value.floatingPoint >= (long double)floatingPoint - 0.01) &&
-                (value.floatingPoint <= (long double)floatingPoint + 0.01);
+        return (std::get<Type::FloatingPoint>(value) >= (long double)floatingPoint - 0.01) &&
+                (std::get<Type::FloatingPoint>(value) <= (long double)floatingPoint + 0.01);
     }
 
     void Json::operator=(double floatingPoint) {
         type = Type::FloatingPoint;
-        value.floatingPoint = (long double)floatingPoint;
+        value = (long double)floatingPoint;
     }
     
     bool Json::operator==(long double floatingPoint) const {
@@ -805,13 +805,13 @@ namespace JSON {
             throw WrongTypeException();
         }
 
-        return (value.floatingPoint >= floatingPoint - 0.01) &&
-                (value.floatingPoint <= floatingPoint + 0.01);
+        return (std::get<Type::FloatingPoint>(value) >= floatingPoint - 0.01) &&
+                (std::get<Type::FloatingPoint>(value) <= floatingPoint + 0.01);
     }
 
     void Json::operator=(long double floatingPoint) {
         type = Type::FloatingPoint;
-        value.floatingPoint = floatingPoint;
+        value = floatingPoint;
     }
 
 
@@ -821,17 +821,17 @@ namespace JSON {
             throw WrongTypeException();
         }
 
-        return *(value.string) == string;
+        return *(std::get<Type::String>(value)) == string;
     }
 
     void Json::operator=(const std::string &string) {
         type = Type::String;
-        value.string = new std::string(string);
+        value = new std::string(string);
     }
 
     bool Json::operator==(const char *string) const {
         if (type == Type::String) {
-            if (*value.string == std::string(string)) {
+            if (*(std::get<Type::String>(value)) == std::string(string)) {
                 return true;
             }
         }
@@ -841,20 +841,24 @@ namespace JSON {
 
     void Json::operator=(const char *string) {
         type = Type::String;
-        value.string = new std::string(string);
+        value = new std::string(string);
     }
 
 
-    bool Json::operator==(Json other) const {
+    bool Json::operator==(const Json &other) const {
         if (type == other.type) {
-            switch(type) {
-                case Type::Boolean: return value.boolean == other.value.boolean; break;
-                case Type::Integer: return value.integer == other.value.integer; break;
-                case Type::FloatingPoint: return value.floatingPoint == other.value.floatingPoint; break;
-                case Type::String: return *(value.string) == *(other.value.string); break;
-                case Type::Array: return *(value.array) == *(other.value.array); break;
-                case Type::Object: return *(value.object) == *(other.value.object); break;
-                default: return true; break;
+            // switch(type) {
+            //     case Type::Boolean: return value == other.value; break;
+            //     case Type::Integer: return value == other.value; break;
+            //     case Type::FloatingPoint: return value.floatingPoint == other.value.floatingPoint; break;
+            //     case Type::String: return *(value.string) == *(other.value.string); break;
+            //     case Type::Array: return *(value.array) == *(other.value.array); break;
+            //     case Type::Object: return *(value.object) == *(other.value.object); break;
+            //     default: return true; break;
+            // }
+
+            if (value == other.value) {
+                return true;
             }
         } 
         
@@ -863,68 +867,70 @@ namespace JSON {
 
     void Json::operator=(const Json &other) {
         type = other.type;
+        value = other.value;
 
-        switch (type) {
-            case Type::Boolean: {
-                value.boolean = other.value.boolean;
-            } break;
+        // switch (type) {
+        //     case Type::Boolean: {
+        //         value = other.value.boolean;
+        //     } break;
 
-            case Type::Integer: {
-                value.integer = other.value.integer;
-            } break;
+        //     case Type::Integer: {
+        //         value.integer = other.value.integer;
+        //     } break;
 
-            case Type::FloatingPoint: {
-                value.floatingPoint = other.value.floatingPoint;
-            } break;
+        //     case Type::FloatingPoint: {
+        //         value.floatingPoint = other.value.floatingPoint;
+        //     } break;
 
-            case Type::String: {
-                const auto otherString = *other.value.string;
-                value.string = new std::string(otherString);
-            } break;
+        //     case Type::String: {
+        //         const auto otherString = *other.value.string;
+        //         value.string = new std::string(otherString);
+        //     } break;
 
-            case Type::Array: {
-                const auto otherArray = *other.value.array;
-                value.array = new std::vector<Json *>(otherArray);
-            } break;
+        //     case Type::Array: {
+        //         const auto otherArray = *other.value.array;
+        //         value.array = new std::vector<Json *>(otherArray);
+        //     } break;
 
-            case Type::Object: {
-                const auto otherObject = *other.value.object;
-                value.object = new std::unordered_map<std::string, Json *>(otherObject);
-            } break;
-        }
+        //     case Type::Object: {
+        //         const auto otherObject = *other.value.object;
+        //         value.object = new std::unordered_map<std::string, Json *>(otherObject);
+        //     } break;
+        // }
     }
 
     void Json::operator=(const Json *other) {
         type = other->type;
+        value = other->value;
 
-        switch (type) {
-            case Type::Boolean: {
-                value.boolean = other->value.boolean;
-            } break;
+        // switch (type) {
+        //     case Type::Boolean: {
+        //         value.boolean = other->value.boolean;
+        //     } break;
 
-            case Type::Integer: {
-                value.integer = other->value.integer;
-            } break;
+        //     case Type::Integer: {
+        //         value.integer = other->value.integer;
+        //     } break;
 
-            case Type::FloatingPoint: {
-                value.floatingPoint = other->value.floatingPoint;
-            } break;
+        //     case Type::FloatingPoint: {
+        //         value.floatingPoint = other->value.floatingPoint;
+        //     } break;
 
-            case Type::String: {
-                const auto otherString = *other->value.string;
-                value.string = new std::string(otherString);
-            } break;
+        //     case Type::String: {
+        //         const auto otherString = *other->value.string;
+        //         value.string = new std::string(otherString);
+        //     } break;
 
-            case Type::Array: {
-                const auto otherArray = *other->value.array;
-                value.array = new std::vector<Json *>(otherArray);
-            } break;
+        //     case Type::Array: {
+        //         const auto otherArray = *other->value.array;
+        //         value.array = new std::vector<Json *>(otherArray);
+        //     } break;
 
-            case Type::Object: {
-                const auto otherObject = *other->value.object;
-                value.object = new std::unordered_map<std::string, Json *>(otherObject);
-            } break;
-        }
+        //     case Type::Object: {
+        //         const auto otherObject = *other->value.object;
+        //         value.object = new std::unordered_map<std::string, Json *>(otherObject);
+        //     } break;
+        // }
     }
 
 
@@ -933,7 +939,7 @@ namespace JSON {
             throw WrongTypeException();
         }
 
-        return *(value.array->at(index));
+        return *( std::get<Type::Array>(value)->at(index) );
     }
 
     Json Json::operator[](const char *key) const {
@@ -941,7 +947,7 @@ namespace JSON {
             throw WrongTypeException();
         }
 
-        return *(value.object->at(std::string(key)));
+        return *( std::get<Type::Object>(value)->at( std::string(key) ) );
     }
 
 
@@ -950,35 +956,35 @@ namespace JSON {
     }
 
     Json::operator bool() {
-        return value.boolean;
+        return std::get<Type::Boolean>(value);
     }
 
     Json::operator int() {
-        return (int)value.integer;
+        return (int)std::get<Type::Integer>(value);
     }
 
     Json::operator long() {
-        return (long)value.integer;
+        return (long)std::get<Type::Integer>(value);
     }
 
     Json::operator long long() {
-        return (long long)value.integer;
+        return std::get<Type::Integer>(value);
     }
 
     Json::operator float() {
-        return (float)value.floatingPoint;
+        return (float)std::get<Type::FloatingPoint>(value);
     }
 
     Json::operator double() {
-        return (double)value.floatingPoint;
+        return (double)std::get<Type::FloatingPoint>(value);
     }
 
     Json::operator long double() {
-        return (long double)value.floatingPoint;
+        return (long double)std::get<Type::FloatingPoint>(value);
     }
 
     Json::operator std::string() {
-        return *value.string;
+        return *( std::get<Type::String>(value) );
     }
 
     std::ostream &operator<<(std::ostream &output, const Json &json) {
@@ -992,19 +998,19 @@ namespace JSON {
                     output << "false";
                 }
                 break;
-            case Json::Type::Integer: output << json.value.integer; break;
-            case Json::Type::FloatingPoint: output << json.value.floatingPoint; break;
-            case Json::Type::String: output << *json.value.string; break;
+            case Json::Type::Integer: output << std::get<Json::Type::Integer>(json.value); break;
+            case Json::Type::FloatingPoint: output << std::get<Json::Type::FloatingPoint>(json.value); break;
+            case Json::Type::String: output << *( std::get<Json::Type::String>(json.value) ); break;
             case Json::Type::Array:
                 output << "[ ";
-                for (const auto &element : *json.value.array) {
+                for (const auto &element : *( std::get<Json::Type::Array>(json.value) ) ) {
                     output << *element << ", ";
                 }
                 output << "]";
                 break;
             case Json::Type::Object:
                 output << "\n{\n";
-                for (const auto &pair: *json.value.object) {
+                for (const auto &pair: *( std::get<Json::Type::Object>(json.value) ) ) {
                     output << '\t' << pair.first << ": " << *pair.second << ',' << std::endl;
                 }
                 output << "}\n";

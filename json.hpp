@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <exception>
 #include <ostream>
+#include <variant>
 
 #include "utility.hpp"
 
@@ -19,22 +20,26 @@ namespace JSON {
         
         friend std::ostream &operator<<(std::ostream &output, const Json &json);
 
+        using JsonString = std::string *;
+        using JsonArray = std::vector<Json *> *;
+        using JsonObject = std::unordered_map<std::string, Json *> *;
+
         public:
             enum Type {
-                Invalid,
                 Boolean,
-                Null,
                 Integer,
                 FloatingPoint,
                 String,
                 Array,
-                Object
+                Object,
+                Null,
+                Invalid
             };  
 
         public:
             Json();
             Json(const Type &type);
-            Json(Json *other);
+            Json(const Json *other);
             ~Json();
 
             /**
@@ -52,14 +57,23 @@ namespace JSON {
         private:
             Type type;
 
-            union {
-                bool boolean;
-                long long integer;
-                long double floatingPoint;
-                std::string *string;
-                std::vector<Json *> *array;
-                std::unordered_map<std::string, Json *> *object;
-            } value;
+            std::variant< 
+                bool, 
+                long long, 
+                long double, 
+                JsonString, 
+                JsonArray, 
+                JsonObject
+            > value;
+            
+            // union {
+            //     bool boolean;
+            //     long long integer;
+            //     long double floatingPoint;
+            //     std::string *string;
+            //     std::vector<Json *> *array;
+            //     std::unordered_map<std::string, Json *> *object;
+            // } value;
 
         public:
             static Json *parseBoolean(const std::string &input);
@@ -96,7 +110,7 @@ namespace JSON {
             bool operator==(const char *string) const;
             void operator=(const char *string);
 
-            bool operator==(Json other) const;
+            bool operator==(const Json &other) const;
             void operator=(const Json &other);
             void operator=(const Json *other);
 
