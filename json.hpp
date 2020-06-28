@@ -65,16 +65,7 @@ namespace JSON {
                 JsonArray, 
                 JsonObject
             > value;
-            
-            // union {
-            //     bool boolean;
-            //     long long integer;
-            //     long double floatingPoint;
-            //     std::string *string;
-            //     std::vector<Json *> *array;
-            //     std::unordered_map<std::string, Json *> *object;
-            // } value;
-
+ 
         public:
             static Json *parseBoolean(const std::string &input);
             static Json *parseNull(const std::string &input);

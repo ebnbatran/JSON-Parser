@@ -847,15 +847,6 @@ namespace JSON {
 
     bool Json::operator==(const Json &other) const {
         if (type == other.type) {
-            // switch(type) {
-            //     case Type::Boolean: return value == other.value; break;
-            //     case Type::Integer: return value == other.value; break;
-            //     case Type::FloatingPoint: return value.floatingPoint == other.value.floatingPoint; break;
-            //     case Type::String: return *(value.string) == *(other.value.string); break;
-            //     case Type::Array: return *(value.array) == *(other.value.array); break;
-            //     case Type::Object: return *(value.object) == *(other.value.object); break;
-            //     default: return true; break;
-            // }
 
             if (value == other.value) {
                 return true;
@@ -868,69 +859,11 @@ namespace JSON {
     void Json::operator=(const Json &other) {
         type = other.type;
         value = other.value;
-
-        // switch (type) {
-        //     case Type::Boolean: {
-        //         value = other.value.boolean;
-        //     } break;
-
-        //     case Type::Integer: {
-        //         value.integer = other.value.integer;
-        //     } break;
-
-        //     case Type::FloatingPoint: {
-        //         value.floatingPoint = other.value.floatingPoint;
-        //     } break;
-
-        //     case Type::String: {
-        //         const auto otherString = *other.value.string;
-        //         value.string = new std::string(otherString);
-        //     } break;
-
-        //     case Type::Array: {
-        //         const auto otherArray = *other.value.array;
-        //         value.array = new std::vector<Json *>(otherArray);
-        //     } break;
-
-        //     case Type::Object: {
-        //         const auto otherObject = *other.value.object;
-        //         value.object = new std::unordered_map<std::string, Json *>(otherObject);
-        //     } break;
-        // }
     }
 
     void Json::operator=(const Json *other) {
         type = other->type;
         value = other->value;
-
-        // switch (type) {
-        //     case Type::Boolean: {
-        //         value.boolean = other->value.boolean;
-        //     } break;
-
-        //     case Type::Integer: {
-        //         value.integer = other->value.integer;
-        //     } break;
-
-        //     case Type::FloatingPoint: {
-        //         value.floatingPoint = other->value.floatingPoint;
-        //     } break;
-
-        //     case Type::String: {
-        //         const auto otherString = *other->value.string;
-        //         value.string = new std::string(otherString);
-        //     } break;
-
-        //     case Type::Array: {
-        //         const auto otherArray = *other->value.array;
-        //         value.array = new std::vector<Json *>(otherArray);
-        //     } break;
-
-        //     case Type::Object: {
-        //         const auto otherObject = *other->value.object;
-        //         value.object = new std::unordered_map<std::string, Json *>(otherObject);
-        //     } break;
-        // }
     }
 
 
