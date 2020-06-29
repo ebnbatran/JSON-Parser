@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "json.hpp"
+#include "../json/json.hpp"
 
 namespace JSON {
     
