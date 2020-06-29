@@ -20,3 +20,7 @@ Then:
 `cmake ..`
 <br>
 `cmake --build`
+
+## Running "parser"
+Specify `../test.json` as an argument to give the program access to the test JSON
+file.
