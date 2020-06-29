@@ -13,9 +13,10 @@ The compiler has to be supporting C++17.
 <br>
 Then:
 <br>
-`
-mkdir build
-cd build
-cmake ..
-cmake --build .
-`
+`mkdir build`
+<br>
+`cd build`
+<br>
+`cmake ..`
+<br>
+`cmake --build`
