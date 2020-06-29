@@ -21,7 +21,8 @@ Then:
 <br>
 `cmake --build .`
 <br>
-This gives you:
+<br>
+### This gives you:
 1. **libJSON.a**: the static JSON library
 2. **parser**: the main app
 3. **tests**: to run all tests
