@@ -7,12 +7,15 @@ It is made as an effort to re-invent the wheel and to better understand how pars
 works.
 
 ## Building
-### Buiding "parser" executable
-Using gcc compiler write down:
-`g++ -std=c++17 -o parser main.cpp json.cpp utility.cpp`
-### Building "tests" executable
-You need to have GoogleTests framework installed where your compiler can
-find them.
-
-Then, using gcc compiler write down:
-`g++ -std=c++17 -o tests tests.cpp json.cpp utility.cpp -lgtest -pthread`
+You need to have GoogleTest Framework installed where your compiler can find it. 
+<br>
+The compiler has to be supporting C++17.
+<br>
+Then:
+<br>
+`
+mkdir build
+cd build
+cmake ..
+cmake --build .
+`
