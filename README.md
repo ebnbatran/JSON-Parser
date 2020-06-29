@@ -19,7 +19,12 @@ Then:
 <br>
 `cmake ..`
 <br>
-`cmake --build`
+`cmake --build .`
+<br>
+This gives you:
+1. **libJSON.a**: the static JSON library
+2. **parser**: the main app
+3. **tests**: to run all tests
 
 ## Running "parser"
 Specify `../test.json` as an argument to give the program access to the test JSON
