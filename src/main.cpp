@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "../json/json.hpp"
+#include <json.hpp>
 
 int main(int argc, char *argv[])
 {
