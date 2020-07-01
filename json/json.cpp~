@@ -144,8 +144,6 @@ namespace JSON {
             
             if (c == '0') {
                 n = 0;
-            } else if (n == (long long)NAN) {
-                return json;
             }
             
             result *= 10;
@@ -182,8 +180,6 @@ namespace JSON {
             
             if (c == '0') {
                 n = 0.0;
-            } else if (n == (long double)NAN) {
-                return json;
             }
 
             // parse
